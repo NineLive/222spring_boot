@@ -38,7 +38,6 @@ public class CarServiceImp implements CarService {
 
     @Transactional
     public void update(long id, Car updatedCar) {
-        updatedCar.setId(id);
         carRepository.save(updatedCar);
     }
 
@@ -67,6 +66,5 @@ public class CarServiceImp implements CarService {
         }
         return carList;
     }
-
 
 }

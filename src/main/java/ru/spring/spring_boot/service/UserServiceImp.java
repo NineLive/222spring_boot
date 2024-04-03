@@ -36,7 +36,6 @@ public class UserServiceImp implements UserService {
 
    @Transactional
    public void update(long id, User updatedUser){
-      updatedUser.setId(id);
       userRepository.save(updatedUser);
    }
 

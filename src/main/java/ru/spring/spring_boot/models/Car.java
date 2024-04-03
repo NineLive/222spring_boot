@@ -16,16 +16,17 @@ public class Car {
     @Column(name = "series")
     private int series;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy="car")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "car")
     private User user;
 
-    public Car(){
+    public Car() {
     }
 
     public Car(String model, int series) {
         this.model = model;
         this.series = series;
     }
+
     public String getModel() {
         return model;
     }

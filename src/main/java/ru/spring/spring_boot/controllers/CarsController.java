@@ -33,13 +33,13 @@ public class CarsController {
 
     @GetMapping()
     public String index(@RequestParam(value = "count", required = false) Integer count,
-                        @RequestParam(value = "sortBy",required = false) String sortBy,
+                        @RequestParam(value = "sortBy", required = false) String sortBy,
                         Model model) {
 
-        if (!sortByModel && Objects.equals(sortBy, "model")){
+        if (!sortByModel && Objects.equals(sortBy, "model")) {
             throw new SortIsBlockingException();
         }
-        if (!sortBySeries && Objects.equals(sortBy, "series")){
+        if (!sortBySeries && Objects.equals(sortBy, "series")) {
             throw new SortIsBlockingException();
         }
         List<Car> carList = carService.getCarsByGivenCounter(count);
