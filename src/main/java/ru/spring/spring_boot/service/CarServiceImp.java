@@ -1,25 +1,31 @@
 package ru.spring.spring_boot.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.spring.spring_boot.SortIsBlockingException;
+import ru.spring.spring_boot.configuration.CarProperties;
 import ru.spring.spring_boot.models.Car;
 import ru.spring.spring_boot.repositories.CarRepository;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 public class CarServiceImp implements CarService {
     public CarRepository carRepository;
 
-    @Value("${carService.maxCar}")
-    private int maxCar;
+    public CarProperties carProperties;
+
 
     @Autowired
-    public CarServiceImp(CarRepository carRepository) {
+    public CarServiceImp(CarRepository carRepository, CarProperties carProperties) {
         this.carRepository = carRepository;
+        this.carProperties = carProperties;
     }
 
     public List<Car> findAll() {
@@ -49,8 +55,8 @@ public class CarServiceImp implements CarService {
     @Override
     public List<Car> getCarsByGivenCounter(Integer count) {
         Optional<Integer> countOptional = Optional.ofNullable(count);
-        if (countOptional.isPresent() && countOptional.get() > 0 && countOptional.get() < maxCar) {
-            return findAll().subList(0, countOptional.get());
+        if (countOptional.isPresent() && countOptional.get() > 0 && countOptional.get() < carProperties.getMaxCar()) {
+            return findCarsBy(Limit.of(count));
         } else {
             return findAll();
         }
@@ -64,7 +70,22 @@ public class CarServiceImp implements CarService {
         if (Objects.equals(field, "series")) {
             carList.sort(Comparator.comparing(Car::getSeries));
         }
+        if (Objects.equals(field, "id")) {
+            carList.sort(Comparator.comparing(Car::getId));
+        }
         return carList;
+    }
+
+    @Override
+    public void checkSortBlocking(String sortBy) {
+        if (carProperties.getListOfDisabledSort().contains(sortBy)){
+            throw new SortIsBlockingException();
+        }
+    }
+
+    @Override
+    public List<Car> findCarsBy(Limit limit) {
+        return carRepository.findCarsBy(limit);
     }
 
 }
