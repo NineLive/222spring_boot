@@ -31,11 +31,8 @@ public class CarsController {
                         @RequestParam(value = "sortBy", required = false) String sortBy,
                         Model model) {
         carService.checkSortBlocking(sortBy);
-        List<Car> carListtest = carService.findCarsBy(Limit.of(count));
-        System.out.println(carListtest);
         List<Car> carList = carService.getCarsByGivenCounter(count);
-        carList = carService.sortByField(carList, sortBy);
-        model.addAttribute("cars", carList);
+        model.addAttribute("cars", carService.sortByField(carList, sortBy));
         return "main/cars";
     }
 }
